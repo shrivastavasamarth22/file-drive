@@ -25,10 +25,7 @@ http.route({
       switch (result.type) {
         case "user.created":
 					await ctx.runMutation(internal.users.createUser, {
-						userId: result.data.id,
-						email: result.data.email_addresses[0]?.email_address,
-						name: `${result.data.first_name} ${result.data.last_name}`,
-						profileImage: result.data.image_url
+						tokenIdentifier: `https://causal-grizzly-81.clerk.accounts.dev|${result.data.id}`
 					})
           break;
       }
