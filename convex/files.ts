@@ -13,8 +13,12 @@ export const createFile = mutation({
 	if (!identity) throw new ConvexError('unauthorized')
 
 	const user = await getUser(ctx, identity.tokenIdentifier)
-
-	if (!user) throw new ConvexError('User not found')
+	
+	if (!user.orgIds.includes(args.orgId) && 
+		 user.tokenIdentifier !== identity.tokenIdentifier
+	) {
+		throw new ConvexError('You do not have access to this org')
+	}
 	
 	await ctx.db.insert('files', {
 		name: args.name,

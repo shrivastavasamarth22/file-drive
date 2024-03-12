@@ -4,10 +4,16 @@ import {MutationCtx, QueryCtx, internalMutation} from "./_generated/server";
 export async function getUser(
 	ctx: QueryCtx | MutationCtx, tokenIdentifier: string
 ) {
-	return await ctx.db
+	const user = await ctx.db
 		.query("users")
 		.withIndex('by_tokenIdentifier', ( q ) => q.eq('tokenIdentifier', tokenIdentifier))
 		.first()
+
+	if (!user) {
+		throw new Error("User not found")
+	}
+
+	return user;
 }
 
 export const createUser = internalMutation({
@@ -27,11 +33,7 @@ export const addOrgIdToUser = internalMutation({
 	},
 	async handler(ctx, args) {
 		const user = await getUser(ctx, args.tokenIdentifier)
-		
-		if (!user) {
-			throw new Error("User not found")
-		}
-		
+
 		await ctx.db.patch(user._id, {
 			orgIds: [...user.orgIds, args.orgId]
 		})
