@@ -5,7 +5,7 @@ export function Header() {
   return (
 	<div className="border-b py-4 bg-gray-50">
 		<div className="container mx-auto flex items-center justify-between">
-			<div>
+			<div className="font-bold">
 				FileDrive
 			</div>
 			<div className="flex gap-2">
