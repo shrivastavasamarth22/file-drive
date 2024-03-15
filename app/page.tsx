@@ -1,5 +1,13 @@
 "use client";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+import {api} from "@/convex/_generated/api";
+import {useOrganization, useUser} from "@clerk/nextjs";
+import {useMutation, useQuery} from "convex/react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/ui/use-toast";
 
 import {Button} from "@/components/ui/button";
 import {
@@ -22,14 +30,6 @@ import {
 
 import {Input} from "@/components/ui/input";
 
-import {api} from "@/convex/_generated/api";
-import {useOrganization, useUser} from "@clerk/nextjs";
-import {useMutation, useQuery} from "convex/react";
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
 const formSchema = z.object({
 	title: z.string().min(1).max(200),
 	file: z.instanceof(FileList)
@@ -39,7 +39,9 @@ export default function Home() {
 	const organization = useOrganization();
 	const user = useUser();
 	const generateUploadUrl = useMutation(api.files.generateUploadUrl)
-	const createFile = useMutation(api.files.createFile) 
+	const createFile = useMutation(api.files.createFile)
+
+	const { toast } = useToast();
 
 	const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
 	
@@ -81,6 +83,12 @@ export default function Home() {
 		form.reset();
 
 		setIsFileDialogOpen(false);
+
+		toast({
+			title: "File uploaded",
+			description: "Now everyone can view your file",
+			variant: "success",
+		})
 
 	}
 
