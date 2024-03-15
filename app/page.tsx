@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+
 import {Button} from "@/components/ui/button";
 import {
 	Dialog,
@@ -38,6 +40,8 @@ export default function Home() {
 	const user = useUser();
 	const generateUploadUrl = useMutation(api.files.generateUploadUrl)
 	const createFile = useMutation(api.files.createFile) 
+
+	const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
 	
 	let orgId: string | undefined = undefined;
 	if (organization.isLoaded && user.isLoaded) {
@@ -59,8 +63,6 @@ export default function Home() {
 	const fileRef = form.register("file");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
-		console.log(values.file)
 		if (!orgId) return;
 		const postUrl = await generateUploadUrl();
 		const result = await fetch(postUrl, {
@@ -70,18 +72,23 @@ export default function Home() {
 		})
 
 		const { storageId } = await result.json()
-		createFile({
+		await createFile({
 			name: values.title,
 			orgId,
 			fileId: storageId
 		})
+
+		form.reset();
+
+		setIsFileDialogOpen(false);
+
 	}
 
 	return (
 		<main className="container mx-auto pt-12">
 			<div className="flex justify-between items-center">
 				<h1 className="text-4xl font-bold">Your Files</h1>
-				<Dialog>
+				<Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
 					<DialogTrigger asChild>
 						<Button
 						>
