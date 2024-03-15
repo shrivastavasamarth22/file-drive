@@ -13,12 +13,20 @@ async function hasAccessToOrg(
 		user.tokenIdentifier.includes(orgId)
 
 	return hasAccess
-	
 }
+
+export const generateUploadUrl = mutation(async (ctx) => {
+	const identity = await ctx.auth.getUserIdentity();
+
+	if (!identity) throw new ConvexError('unauthorized')
+
+	return await ctx.storage.generateUploadUrl()
+})
 
 export const createFile = mutation({
 	args: {
 		name: v.string(),
+		fileId: v.id("_storage"),
 		orgId: v.string(),
 	},
 	async handler(ctx, args) {
@@ -33,6 +41,7 @@ export const createFile = mutation({
 	await ctx.db.insert('files', {
 		name: args.name,
 		orgId: args.orgId,
+		fileId: args.fileId,
 	})
 	}
 })

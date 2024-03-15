@@ -12,7 +12,6 @@ import {
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -37,21 +36,8 @@ const formSchema = z.object({
 export default function Home() {
 	const organization = useOrganization();
 	const user = useUser();
-
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			title: "",
-			file: undefined
-		}
-	})
-
-	const fileRef = form.register("file");
-
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
-		console.log(values.file)
-	}
+	const generateUploadUrl = useMutation(api.files.generateUploadUrl)
+	const createFile = useMutation(api.files.createFile) 
 	
 	let orgId: string | undefined = undefined;
 	if (organization.isLoaded && user.isLoaded) {
@@ -62,13 +48,32 @@ export default function Home() {
 		api.files.getFiles,
 		orgId ? {orgId} : "skip"
 	)
-	const createFile = useMutation(api.files.createFile) 
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			title: "",
+			file: undefined
+		}
+	})
 
-	const onClick = () => {
+	const fileRef = form.register("file");
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		console.log(values);
+		console.log(values.file)
 		if (!orgId) return;
+		const postUrl = await generateUploadUrl();
+		const result = await fetch(postUrl, {
+			method: "POST",
+			headers: { "Content-Type": values.file[0]!.type },
+			body: values.file[0]
+		})
+
+		const storageId = await result.json()
 		createFile({
-			name: "New File",
-			orgId
+			name: values.title,
+			orgId,
+			fileId: storageId
 		})
 	}
 
@@ -134,8 +139,6 @@ export default function Home() {
 					{file.name}
 				</div>
 			))}
-
-
 		</main>
 	);
 }
