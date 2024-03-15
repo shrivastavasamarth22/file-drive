@@ -69,7 +69,7 @@ export default function Home() {
 			body: values.file[0]
 		})
 
-		const storageId = await result.json()
+		const { storageId } = await result.json()
 		createFile({
 			name: values.title,
 			orgId,
@@ -92,6 +92,10 @@ export default function Home() {
 					<DialogHeader>
 						<DialogTitle className="mb-8">Upload your file here</DialogTitle>
 						<DialogDescription>
+							This file will be accessible to all members of your organization
+						</DialogDescription>
+					</DialogHeader>
+						<div>
 							<Form {...form}>
 								<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 									<FormField 
@@ -126,9 +130,8 @@ export default function Home() {
 									<Button type="submit">Submit</Button>
 								</form>
 							</Form>
-						</DialogDescription>
-					</DialogHeader>
-				</DialogContent>
+						</div>
+					</DialogContent>
 				</Dialog>
 			</div>
 
