@@ -69,7 +69,6 @@ export function UploadButton() {
 			headers: { "Content-Type": values.file[0]!.type },
 			body: values.file[0],
 		});
-
 		const { storageId } = await result.json();
 
 		try {
