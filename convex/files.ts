@@ -75,7 +75,6 @@ export const getFiles = query({
 export const deleteFile = mutation({
 	args: {
 		fileId: v.id("files"),
-		orgId: v.string(),
 	},
 	async handler(ctx, args) {
 		const identity = await ctx.auth.getUserIdentity();
