@@ -74,14 +74,15 @@ export default function Home() {
 		})
 
 		const { storageId } = await result.json()
+
+		try {
 		await createFile({
 			name: values.title,
 			orgId,
 			fileId: storageId
 		})
-
+		
 		form.reset();
-
 		setIsFileDialogOpen(false);
 
 		toast({
@@ -90,13 +91,23 @@ export default function Home() {
 			variant: "success",
 		})
 
+		} catch	(e) {
+			toast({
+				title: "Something went wrong",
+				description: "There was an error uploading your file. Try again later",
+				variant: "destructive",
+			})
+		}
 	}
 
 	return (
 		<main className="container mx-auto pt-12">
 			<div className="flex justify-between items-center">
 				<h1 className="text-4xl font-bold">Your Files</h1>
-				<Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+				<Dialog open={isFileDialogOpen} onOpenChange={(isOpen) => { 
+					setIsFileDialogOpen(isOpen)
+					form.reset()
+				}}>
 					<DialogTrigger asChild>
 						<Button
 						>

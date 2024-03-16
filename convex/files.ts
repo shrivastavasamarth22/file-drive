@@ -30,19 +30,19 @@ export const createFile = mutation({
 		orgId: v.string(),
 	},
 	async handler(ctx, args) {
-	const identity = await ctx.auth.getUserIdentity();
+		const identity = await ctx.auth.getUserIdentity();
 
-	if (!identity) throw new ConvexError('unauthorized')
+		if (!identity) throw new ConvexError('unauthorized')
 
-	const hasAccess = await hasAccessToOrg(ctx, identity.tokenIdentifier, args.orgId)
+		const hasAccess = await hasAccessToOrg(ctx, identity.tokenIdentifier, args.orgId)
 
-	if (!hasAccess) throw new ConvexError('you do not have access to this org')
+		if (!hasAccess) throw new ConvexError('you do not have access to this org')
 
-	await ctx.db.insert('files', {
-		name: args.name,
-		orgId: args.orgId,
-		fileId: args.fileId,
-	})
+		await ctx.db.insert('files', {
+			name: args.name,
+			orgId: args.orgId,
+			fileId: args.fileId,
+		})
 	}
 })
 
