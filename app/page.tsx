@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/form";
 
 import {Input} from "@/components/ui/input";
+import {Loader2} from "lucide-react";
 
 const formSchema = z.object({
 	title: z.string().min(1).max(200),
@@ -153,7 +154,16 @@ export default function Home() {
 											</FormItem>
 										)}
 									/>
-									<Button type="submit">Submit</Button>
+									<Button 
+										type="submit"
+										disabled={form.formState.isSubmitting}
+										className="flex gap-1 items-center justify-center"
+									>
+										{form.formState.isSubmitting && (
+											<Loader2 className="h-4 w-4 animate-spin"/>
+										)}
+										Submit
+									</Button>
 								</form>
 							</Form>
 						</div>
