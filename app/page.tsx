@@ -5,6 +5,7 @@ import {useOrganization, useUser} from "@clerk/nextjs";
 import {useQuery} from "convex/react";
 
 import { UploadButton } from "./upload-button";
+import {FileCard} from "./file-card";
 
 export default function Home() {
 	const organization = useOrganization();
@@ -24,18 +25,15 @@ export default function Home() {
 
 	return (
 		<main className="container mx-auto pt-12">
-			<div className="flex justify-between items-center">
+			<div className="flex justify-between items-center mb-8">
 				<h1 className="text-4xl font-bold">Your Files</h1>
 				<UploadButton />
 			</div>
-
-			{files?.map(file => (
-				<div
-					key={file._id}
-				>
-					{file.name}
-				</div>
-			))}
+			<div className="grid grid-cols-4 gap-4">
+				{files?.map(file => (
+					<FileCard key={file._id} file={file} />
+				))}
+			</div>
 		</main>
 	);
 }
