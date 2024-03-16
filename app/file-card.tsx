@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useToast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +36,24 @@ import { EllipsisVertical, TrashIcon } from "lucide-react";
 function FileCardActions({ file }: { file: Doc<"files"> }) {
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 	const deleteFile = useMutation(api.files.deleteFile);
+	const { toast } = useToast();
+
+	const onDelete = async () => {
+		try {
+			await deleteFile({ fileId: file._id });
+			toast({
+				title: "File Deleted",
+				description: "The file has been deleted successfully!",
+				variant: "success",
+			});
+		} catch (error) {
+			toast({
+				title: "Error",
+				description: "An error occurred while deleting the file",
+				variant: "destructive",
+			});
+		}
+	};
 
 	return (
 		<>
@@ -49,13 +68,7 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							onClick={() => {
-								deleteFile({ fileId: file._id });
-							}}
-						>
-							Continue
-						</AlertDialogAction>
+						<AlertDialogAction onClick={onDelete}>Continue</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
