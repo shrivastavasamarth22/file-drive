@@ -1,8 +1,9 @@
 import { ReactNode, useState } from "react";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -97,6 +98,10 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
 	);
 }
 
+function getFileUrl(fileId: Id<"_storage">): string {
+	return `${process.env.NEXT_PUBLIC_CONVEX_URL!}/api/storage/${fileId}`;
+}
+
 export function FileCard({ file }: { file: Doc<"files"> }) {
 	const typeIcons = {
 		image: <ImageIcon />,
@@ -116,10 +121,19 @@ export function FileCard({ file }: { file: Doc<"files"> }) {
 				</div>
 			</CardHeader>
 			<CardContent className="h-[200px] flex justify-center items-center">
+				{file.type === "image" && (
+					<Image
+						src={getFileUrl(file.fileId)}
+						alt={file.name}
+						width="250"
+						height="150"
+						objectFit="cover"
+					/>
+				)}
 				{file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
 				{file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
 			</CardContent>
-			<CardFooter>
+			<CardFooter className="flex items-center justify-center">
 				<Button>Download</Button>
 			</CardFooter>
 		</Card>
