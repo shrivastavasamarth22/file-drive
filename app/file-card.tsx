@@ -134,7 +134,14 @@ export function FileCard({ file }: { file: Doc<"files"> }) {
 				{file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
 			</CardContent>
 			<CardFooter className="flex items-center justify-center">
-				<Button>Download</Button>
+				<Button
+					onClick={() => {
+						// Save the file to the user's computer
+						window.open(getFileUrl(file.fileId), "_blank");
+					}}
+				>
+					Download
+				</Button>
 			</CardFooter>
 		</Card>
 	);
